@@ -1,0 +1,71 @@
+use crate::{Vec2, Color, WHITE};
+use macroquad::math::vec2;
+
+
+pub struct GameParams {
+    pub ship: ShipParams,
+    pub asteroid: AsteroidParams,
+    pub asteroid_spawning_rate: i32,
+}
+
+
+#[derive(Clone)]
+pub struct ShipDrawParams {
+    pub color: Color,
+}
+
+#[derive(Clone)]
+pub struct ShipParams {
+    pub ship_start_position: Vec2,
+    pub ship_start_velocity: f32,
+    pub ship_acceleration: f32,
+    pub default_small_radius: f32,
+    pub default_big_radius: f32,
+    pub default_turn_speed: f32,
+    pub draw: ShipDrawParams,
+}
+
+impl ShipParams {
+    pub fn default() -> Self {
+        Self {
+            ship_start_position: vec2(500., 500.),
+            ship_start_velocity: 0.1,
+            ship_acceleration: 0.1,
+            default_small_radius: 10.,
+            default_big_radius: 16.,
+            default_turn_speed: 1.8,
+            draw: ShipDrawParams {
+                color: WHITE,
+            }
+        }
+    }
+}
+
+
+#[derive(Clone)] // Clean?
+pub struct AsteroidDrawParams {
+    pub color: Color,
+}
+
+#[derive(Clone)] // Efficient?
+pub struct AsteroidParams {
+    pub spawning_rate: f32,
+    pub vel_range: std::ops::Range<f32>,
+    pub size_range: std::ops::Range<f32>,
+    pub draw: AsteroidDrawParams,
+}
+
+impl AsteroidParams {
+
+    pub fn default() -> Self {
+        Self {
+            spawning_rate: 0.97,
+            vel_range: 1.0..3.0,
+            size_range: 12.0..30.0,
+            draw: AsteroidDrawParams {
+                color: WHITE,
+            }
+        }
+    }
+}
+
