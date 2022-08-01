@@ -1,12 +1,16 @@
 use crate::{
     Vec2, vec2, screen_width, screen_height,
+    polar_to_cartesian, cartesian_to_polar,
     draw_circle
 };
+use macroquad::ui::hash;
 use super::params::AsteroidParams;
 
 use rand::Rng;
 
+#[derive(Clone)]
 pub struct Asteroid {
+    id: u64,
     pos: Vec2,
     vel: Vec2,
     radius: f32,
@@ -27,11 +31,28 @@ impl Asteroid {
         );
         let radius = rng.gen_range(params.size_range.clone());
         Self {
+            id: hash!(),
             pos,
             vel,
             radius,
             params: params.clone(),
         }
+    }
+
+    pub fn get_child(&self) -> Asteroid {
+        let mut rng = rand::thread_rng();
+        let mut child = Self {
+            id: hash!(),
+            pos: self.pos,
+            vel: self.vel,
+            radius: self.radius * rng.gen_range(self.params.child_radius_variation.clone()),
+            params: self.params.clone(),
+        };
+        let (_, heading) = cartesian_to_polar(self.vel).into();
+        child.set_heading(
+            heading * rng.gen_range(self.params.child_heading_variation.clone())
+        );
+        child
     }
 
     pub fn update_self(&mut self) {
@@ -56,6 +77,25 @@ impl Asteroid {
         )
     }
 
-    pub fn is_overlapping(&self, other: &Asteroid) -> bool { false }
-    pub fn collide(&self, other: &Asteroid) {}
+    pub fn is_point_overlapping(&self, p: Vec2) -> bool {
+        self.pos.distance(p) < self.radius
+    }
+
+    fn is_too_small_to_split(&self) -> bool {
+        self.radius < self.params.min_radius_to_split
+    }
+
+    pub fn set_heading(&mut self, angle: f32) {
+        polar_to_cartesian(self.vel.length(), angle);
+    }
+}
+
+impl PartialEq for Asteroid {
+    fn eq(&self, other: &Asteroid) -> bool {
+        self.pos == other.pos  // id comparison
+    }
+
+    fn ne(&self, other: &Asteroid) -> bool {
+        self.pos != other.pos
+    }
 }

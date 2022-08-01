@@ -34,22 +34,43 @@ impl MainState {
     }
 
     pub fn update(&mut self) {
+        // spawn new asteroids
         let rnd: f32 = rand::thread_rng().gen();
         if rnd > self.params.asteroid.spawning_rate {
-            self.asteroids.push(Asteroid::new_random(self.params.asteroid.clone()));
+            self.asteroids.push(
+                Asteroid::new_random(self.params.asteroid.clone())
+            );
         }
+
+        // update
         for ast in self.asteroids.iter_mut() {
             ast.update_self();
         }
+        self.ship.update_self();
+
+        // collide
+        let mut collided_asteroids = Vec::new();
         for ast in self.asteroids.iter() {
-            for pot_collision_obj in self.asteroids.iter() {
-                if ast.is_overlapping(pot_collision_obj) {
-                    ast.collide(pot_collision_obj);
-                    pot_collision_obj.collide(ast);
-                }
+            if self.ship.is_overlapping(ast) {
+                collided_asteroids.push((*ast).clone());
+                println!("len: {}", collided_asteroids.len());
             }
         }
-        self.ship.update_self();
+
+        for ast in collided_asteroids.iter() {
+            self.split_ast(&ast);
+            self.ship.collide(&ast);
+        }
+    }
+
+    // fn get_collided_asteroids(&self) -> Vec<&Asteroid> {
+    //     collided_asteroids
+    // }
+
+    fn split_ast(&mut self, ast: &Asteroid) {
+        self.asteroids.retain(|a| *a != *ast);
+        // self.asteroids.push(ast.get_child());
+        // self.asteroids.push(ast.get_child());
     }
 
     pub fn handle_input(&mut self) {

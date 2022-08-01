@@ -14,6 +14,7 @@ use self::structs::{
 //     conf:    config
 //     pos:     position
 //     vel:     vector
+//     acc:     acceleration
 
 
 #[macroquad::main(win_conf)]

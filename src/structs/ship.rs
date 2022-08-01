@@ -1,12 +1,13 @@
 use crate::{
+    Asteroid,
     draw_triangle,
-    Vec2, vec2,
+    Vec2,
     ShipParams,
+    RED,
 };
 use macroquad::math;
 use super::{
     params::ShipDrawParams,
-    utils::to_screen_cord,
 };
 
 pub struct Ship {
@@ -21,6 +22,7 @@ pub struct Ship {
 }
 
 impl Ship {
+
     pub fn new(params: ShipParams) -> Self {
         Self {
             pos: params.ship_start_position,
@@ -45,21 +47,10 @@ impl Ship {
 
     pub fn draw_self(&self) {
         let (a, b, c) = self.calc_corners();
-        draw_triangle(
-            to_screen_cord(a),
-            to_screen_cord(b),
-            to_screen_cord(c),
-            self.draw_params.color
-        )
+        draw_triangle(a, b, c, self.draw_params.color)
     }
 
     fn calc_corners(&self) -> (Vec2, Vec2, Vec2) {
-        // given: r & angle
-        // x, y
-        // cos(angle) = x/r
-        // x: r*cos(angle)
-        // y: r*sin(angle)
-
         (
             self.pos + math::polar_to_cartesian(self.small_radius, (self.heading + 120.).to_radians()),
             self.pos + math::polar_to_cartesian(self.small_radius, (self.heading - 120.).to_radians()),
@@ -70,6 +61,17 @@ impl Ship {
     pub fn turn(&mut self, angle: f32) {
         self.heading += angle;
         self.heading %= 360.;
-        println!["{}", self.heading];
+    }
+
+    pub fn is_overlapping(&self, ast: &Asteroid) -> bool {
+        let (a, b, c) = self.calc_corners();
+        ast.is_point_overlapping(a)
+        && ast.is_point_overlapping(b)
+        && ast.is_point_overlapping(c)
+    }
+
+    pub fn collide(&mut self, ast: &Asteroid) {
+        println!("collision");
+        self.draw_params.color = RED
     }
 }
