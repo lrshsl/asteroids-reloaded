@@ -1,6 +1,7 @@
 use macroquad::prelude::*;
 
 mod structs;
+mod constants;
 
 use self::structs::{
     mainstate::MainState,

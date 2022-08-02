@@ -11,6 +11,7 @@ pub struct Ship {
     pos: Vec2,
     vel: f32,
     acc: f32,
+    air_drag: f32,
     heading: f32,
     small_radius: f32,
     big_radius: f32,
@@ -25,6 +26,7 @@ impl Ship {
             pos: params.ship_start_position,
             vel: params.ship_start_velocity,
             acc: params.ship_acceleration,
+            air_drag: params.air_drag,
             heading: 270.,
             small_radius: params.default_small_radius,
             big_radius: params.default_big_radius,
@@ -34,6 +36,7 @@ impl Ship {
     }
 
     pub fn update_self(&mut self) {
+        self.vel *= self.air_drag;
         let a = math::polar_to_cartesian(self.vel, self.heading.to_radians());
         self.pos += a
     }

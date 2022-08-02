@@ -2,6 +2,7 @@ use crate::{
     Ship, Asteroid,
     GameParams,
     KeyCode, is_key_down,
+    constants::MAX_ASTEROIDS,
 };
 
 use rand::{self, Rng};
@@ -36,7 +37,7 @@ impl MainState {
     pub fn update(&mut self) {
         // spawn new asteroids
         let rnd: f32 = rand::thread_rng().gen();
-        if rnd > self.params.asteroid.spawning_rate {
+        if self.asteroids.len() < MAX_ASTEROIDS && rnd > self.params.asteroid.spawning_rate {
             self.asteroids.push(
                 Asteroid::new_random(self.params.asteroid.clone())
             );

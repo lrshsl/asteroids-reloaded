@@ -17,6 +17,7 @@ pub struct ShipParams {
     pub default_small_radius: f32,
     pub default_big_radius: f32,
     pub default_turn_speed: f32,
+    pub air_drag: f32,
 }
 
 impl ShipParams {
@@ -28,6 +29,7 @@ impl ShipParams {
             default_small_radius: 10.,
             default_big_radius: 16.,
             default_turn_speed: 1.8,
+            air_drag: 0.99,
         }
     }
 }
@@ -51,7 +53,7 @@ impl AsteroidParams {
             size_range: 12.0 .. 30.0,
             min_radius_to_split: 10.,
             child_radius_variation: 0.3 .. 0.6,
-            child_heading_variation: 10.0 .. 30.0,
+            child_heading_variation: 30.0 .. 90.0,
         }
     }
 }
