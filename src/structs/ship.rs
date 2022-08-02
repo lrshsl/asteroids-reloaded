@@ -3,12 +3,9 @@ use crate::{
     draw_triangle,
     Vec2,
     ShipParams,
-    RED,
+    Color, color_u8,
 };
 use macroquad::math;
-use super::{
-    params::ShipDrawParams,
-};
 
 pub struct Ship {
     pos: Vec2,
@@ -18,7 +15,7 @@ pub struct Ship {
     small_radius: f32,
     big_radius: f32,
     pub turn_speed: f32,
-    draw_params: ShipDrawParams,
+    color: Color,
 }
 
 impl Ship {
@@ -32,7 +29,7 @@ impl Ship {
             small_radius: params.default_small_radius,
             big_radius: params.default_big_radius,
             turn_speed: params.default_turn_speed,
-            draw_params: params.draw,
+            color: color_u8![255., 255., 255., 255.]
         }
     }
 
@@ -47,7 +44,7 @@ impl Ship {
 
     pub fn draw_self(&self) {
         let (a, b, c) = self.calc_corners();
-        draw_triangle(a, b, c, self.draw_params.color)
+        draw_triangle(a, b, c, self.color)
     }
 
     fn calc_corners(&self) -> (Vec2, Vec2, Vec2) {
@@ -71,7 +68,6 @@ impl Ship {
     }
 
     pub fn collide(&mut self, ast: &Asteroid) {
-        println!("collision");
-        self.draw_params.color = RED
+        self.color = ast.color;
     }
 }

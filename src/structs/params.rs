@@ -1,4 +1,4 @@
-use crate::{Vec2, Color, WHITE};
+use crate::Vec2;
 use super::utils::to_screen_cord;
 use macroquad::math::vec2;
 
@@ -9,12 +9,6 @@ pub struct GameParams {
     pub asteroid_spawning_rate: i32,
 }
 
-
-#[derive(Clone)]
-pub struct ShipDrawParams {
-    pub color: Color,
-}
-
 #[derive(Clone)]
 pub struct ShipParams {
     pub ship_start_position: Vec2,
@@ -23,7 +17,6 @@ pub struct ShipParams {
     pub default_small_radius: f32,
     pub default_big_radius: f32,
     pub default_turn_speed: f32,
-    pub draw: ShipDrawParams,
 }
 
 impl ShipParams {
@@ -35,17 +28,8 @@ impl ShipParams {
             default_small_radius: 10.,
             default_big_radius: 16.,
             default_turn_speed: 1.8,
-            draw: ShipDrawParams {
-                color: WHITE,
-            }
         }
     }
-}
-
-
-#[derive(Clone)] // Clean?
-pub struct AsteroidDrawParams {
-    pub color: Color,
 }
 
 #[derive(Clone)] // Efficient?
@@ -56,7 +40,6 @@ pub struct AsteroidParams {
     pub min_radius_to_split: f32,
     pub child_radius_variation: std::ops::Range<f32>,
     pub child_heading_variation: std::ops::Range<f32>,
-    pub draw: AsteroidDrawParams,
 }
 
 impl AsteroidParams {
@@ -69,9 +52,6 @@ impl AsteroidParams {
             min_radius_to_split: 10.,
             child_radius_variation: 0.3 .. 0.6,
             child_heading_variation: 10.0 .. 30.0,
-            draw: AsteroidDrawParams {
-                color: WHITE,
-            }
         }
     }
 }

@@ -1,19 +1,18 @@
 use crate::{
     Vec2, vec2, screen_width, screen_height,
     polar_to_cartesian, cartesian_to_polar,
-    draw_circle
+    draw_circle, color_u8, Color,
 };
-use macroquad::ui::hash;
 use super::params::AsteroidParams;
 
 use rand::Rng;
 
 #[derive(Clone)]
 pub struct Asteroid {
-    id: u64,
     pos: Vec2,
     vel: Vec2,
     radius: f32,
+    pub color: Color,
     params: AsteroidParams,
 }
 
@@ -30,11 +29,17 @@ impl Asteroid {
             rng.gen_range(params.vel_range.clone())
         );
         let radius = rng.gen_range(params.size_range.clone());
+        let color = color_u8![
+            rng.gen_range(0.0 .. 255.0), 
+            rng.gen_range(0.0 .. 255.0), 
+            rng.gen_range(0.0 .. 255.0),
+            255.
+        ];
         Self {
-            id: hash!(),
             pos,
             vel,
             radius,
+            color,
             params: params.clone(),
         }
     }
@@ -42,10 +47,10 @@ impl Asteroid {
     pub fn get_child(&self) -> Asteroid {
         let mut rng = rand::thread_rng();
         let mut child = Self {
-            id: hash!(),
             pos: self.pos,
             vel: self.vel,
             radius: self.radius * rng.gen_range(self.params.child_radius_variation.clone()),
+            color: self.color,
             params: self.params.clone(),
         };
         let (_, heading) = cartesian_to_polar(self.vel).into();
@@ -73,7 +78,7 @@ impl Asteroid {
             self.pos.x,
             self.pos.y,
             self.radius,
-            self.params.draw.color
+            self.color
         )
     }
 

@@ -49,6 +49,15 @@ impl MainState {
         self.ship.update_self();
 
         // collide
+
+        for ast in self.get_collided_asteroids().iter() {
+            self.score += 1;
+            self.split_ast(&ast);
+            self.ship.collide(&ast);
+        }
+    }
+
+    fn get_collided_asteroids(&self) -> Vec<Asteroid> {
         let mut collided_asteroids = Vec::new();
         for ast in self.asteroids.iter() {
             if self.ship.is_overlapping(ast) {
@@ -56,21 +65,13 @@ impl MainState {
                 println!("len: {}", collided_asteroids.len());
             }
         }
-
-        for ast in collided_asteroids.iter() {
-            self.split_ast(&ast);
-            self.ship.collide(&ast);
-        }
+        collided_asteroids
     }
-
-    // fn get_collided_asteroids(&self) -> Vec<&Asteroid> {
-    //     collided_asteroids
-    // }
 
     fn split_ast(&mut self, ast: &Asteroid) {
         self.asteroids.retain(|a| *a != *ast);
-        // self.asteroids.push(ast.get_child());
-        // self.asteroids.push(ast.get_child());
+        self.asteroids.push(ast.get_child());
+        self.asteroids.push(ast.get_child());
     }
 
     pub fn handle_input(&mut self) {
