@@ -1,12 +1,6 @@
-use crate::{
-    Ship, Asteroid,
-    GameParams,
-    KeyCode, is_key_down,
-    constants::MAX_ASTEROIDS,
-};
+use crate::{constants::MAX_ASTEROIDS, is_key_down, Asteroid, GameParams, KeyCode, Ship};
 
 use rand::{self, Rng};
-
 
 pub struct MainState {
     score: u32,
@@ -38,9 +32,8 @@ impl MainState {
         // spawn new asteroids
         let rnd: f32 = rand::thread_rng().gen();
         if self.asteroids.len() < MAX_ASTEROIDS && rnd > self.params.asteroid.spawning_rate {
-            self.asteroids.push(
-                Asteroid::new_random(self.params.asteroid.clone())
-            );
+            self.asteroids
+                .push(Asteroid::new_random(self.params.asteroid.clone()));
         }
 
         // update
@@ -53,8 +46,8 @@ impl MainState {
 
         for ast in self.get_collided_asteroids().iter() {
             self.score += 1;
-            self.split_ast(&ast);
-            self.ship.collide(&ast);
+            self.split_ast(ast);
+            self.ship.collide(ast);
         }
     }
 

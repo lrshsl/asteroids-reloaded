@@ -1,9 +1,5 @@
 use crate::{
-    Asteroid,
-    draw_triangle,
-    Vec2,
-    ShipParams,
-    Color, color_u8,
+    color_u8, draw_triangle, screen_height, screen_width, Asteroid, Color, ShipParams, Vec2,
 };
 use macroquad::math;
 
@@ -20,7 +16,6 @@ pub struct Ship {
 }
 
 impl Ship {
-
     pub fn new(params: ShipParams) -> Self {
         Self {
             pos: params.ship_start_position,
@@ -31,14 +26,25 @@ impl Ship {
             small_radius: params.default_small_radius,
             big_radius: params.default_big_radius,
             turn_speed: params.default_turn_speed,
-            color: color_u8![255., 255., 255., 255.]
+            color: color_u8![255., 255., 255., 255.],
         }
     }
 
     pub fn update_self(&mut self) {
         self.vel *= self.air_drag;
         let a = math::polar_to_cartesian(self.vel, self.heading.to_radians());
-        self.pos += a
+        self.pos += a;
+        self.wrap_around()
+    }
+
+    fn wrap_around(&mut self) {
+        if self.pos.x < 0. || self.pos.x > screen_width() {
+            self.heading -= 90.;
+            self.heading *= -1.;
+            self.heading += 90.;
+        } else if self.pos.y < 0. || self.pos.y > screen_height() {
+            self.heading *= -1.
+        }
     }
 
     pub fn accelerate(&mut self, factor: f32) {
@@ -52,8 +58,10 @@ impl Ship {
 
     fn calc_corners(&self) -> (Vec2, Vec2, Vec2) {
         (
-            self.pos + math::polar_to_cartesian(self.small_radius, (self.heading + 120.).to_radians()),
-            self.pos + math::polar_to_cartesian(self.small_radius, (self.heading - 120.).to_radians()),
+            self.pos
+                + math::polar_to_cartesian(self.small_radius, (self.heading + 120.).to_radians()),
+            self.pos
+                + math::polar_to_cartesian(self.small_radius, (self.heading - 120.).to_radians()),
             self.pos + math::polar_to_cartesian(self.big_radius, self.heading.to_radians()),
         )
     }
@@ -65,9 +73,7 @@ impl Ship {
 
     pub fn is_overlapping(&self, ast: &Asteroid) -> bool {
         let (a, b, c) = self.calc_corners();
-        ast.is_point_overlapping(a)
-        && ast.is_point_overlapping(b)
-        && ast.is_point_overlapping(c)
+        ast.is_point_overlapping(a) && ast.is_point_overlapping(b) && ast.is_point_overlapping(c)
     }
 
     pub fn collide(&mut self, ast: &Asteroid) {

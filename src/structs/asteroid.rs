@@ -1,9 +1,8 @@
-use crate::{
-    Vec2, vec2, screen_width, screen_height,
-    polar_to_cartesian, cartesian_to_polar,
-    draw_circle, color_u8, Color,
-};
 use super::params::AsteroidParams;
+use crate::{
+    cartesian_to_polar, color_u8, draw_circle, polar_to_cartesian, screen_height, screen_width,
+    vec2, Color, Vec2,
+};
 
 use rand::Rng;
 
@@ -17,22 +16,21 @@ pub struct Asteroid {
 }
 
 impl Asteroid {
-
     pub fn new_random(params: AsteroidParams) -> Self {
         let mut rng = rand::thread_rng();
         let pos = vec2(
             rng.gen_range(1.0..screen_width()),
-            rng.gen_range(1.0..screen_width())
+            rng.gen_range(1.0..screen_width()),
         );
         let vel = vec2(
             rng.gen_range(params.vel_range.clone()),
-            rng.gen_range(params.vel_range.clone())
+            rng.gen_range(params.vel_range.clone()),
         );
         let radius = rng.gen_range(params.size_range.clone());
         let color = color_u8![
-            rng.gen_range(0.0 .. 255.0), 
-            rng.gen_range(0.0 .. 255.0), 
-            rng.gen_range(0.0 .. 255.0),
+            rng.gen_range(0.0..255.0),
+            rng.gen_range(0.0..255.0),
+            rng.gen_range(0.0..255.0),
             255.
         ];
         Self {
@@ -40,7 +38,7 @@ impl Asteroid {
             vel,
             radius,
             color,
-            params: params.clone(),
+            params,
         }
     }
 
@@ -54,9 +52,7 @@ impl Asteroid {
             params: self.params.clone(),
         };
         let (_, heading) = cartesian_to_polar(self.vel).into();
-        child.set_heading(
-            heading * rng.gen_range(self.params.child_heading_variation.clone())
-        );
+        child.set_heading(heading * rng.gen_range(self.params.child_heading_variation.clone()));
         child
     }
 
@@ -74,20 +70,11 @@ impl Asteroid {
     }
 
     pub fn draw_self(&self) {
-        draw_circle(
-            self.pos.x,
-            self.pos.y,
-            self.radius,
-            self.color
-        )
+        draw_circle(self.pos.x, self.pos.y, self.radius, self.color)
     }
 
     pub fn is_point_overlapping(&self, p: Vec2) -> bool {
         self.pos.distance(p) < self.radius
-    }
-
-    fn is_too_small_to_split(&self) -> bool {
-        self.radius < self.params.min_radius_to_split
     }
 
     pub fn set_heading(&mut self, angle: f32) {
@@ -97,10 +84,6 @@ impl Asteroid {
 
 impl PartialEq for Asteroid {
     fn eq(&self, other: &Asteroid) -> bool {
-        self.pos == other.pos  // id comparison
-    }
-
-    fn ne(&self, other: &Asteroid) -> bool {
-        self.pos != other.pos
+        self.pos == other.pos // id comparison?
     }
 }

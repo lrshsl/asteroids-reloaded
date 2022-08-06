@@ -42,7 +42,7 @@ async fn main() {
 
 fn win_conf() -> Conf {
     Conf {
-        window_title: "Asteroids in Rust with macroquad".to_owned(),
+        window_title: "Asteroids in Rust (macroquad)".to_owned(),
         fullscreen: true,
         ..Default::default()
     }
